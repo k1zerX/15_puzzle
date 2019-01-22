@@ -6,11 +6,11 @@
 /*   By: kbatz <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/22 19:43:39 by kbatz             #+#    #+#             */
-/*   Updated: 2019/01/22 20:01:27 by kbatz            ###   ########.fr       */
+/*   Updated: 2019/01/22 21:07:29 by kbatz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "15_puzzle.h"
+#include "puzzle_15.h"
 
 void	swap(int *a, int *b)
 {
@@ -19,34 +19,38 @@ void	swap(int *a, int *b)
 	*a ^= *b;
 }
 
-char	up(int **map, int y, int x)
+char	up(int **map, int *y, int *x)
 {
-	if (y + 1 >= Y_SIZE || x >= X_SIZE || y < 0 || x < 0)
+	if (*y >= Y_SIZE || *x >= X_SIZE || *y - 1 < 0 || *x < 0)
 		return (0);
-	swap(map[y] + x, map[y + 1] + x);
+	swap(map[*y] + *x, map[*y - 1] + *x);
+	(*y)--;
 	return (1);
 }
 
-char	down(int **map, int y, int x)
+char	down(int **map, int *y, int *x)
 {
-	if (y >= Y_SIZE || x >= X_SIZE || y - 1 < 0 || x < 0)
+	if (*y + 1 >= Y_SIZE || *x >= X_SIZE || *y < 0 || x < 0)
 		return (0);
-	swap(map[y] + x, map[y - 1] + x);
+	swap(map[*y] + *x, map[*y + 1] + *x);
+	(*y)++;
 	return (1);
 }
 
-char	left(int **map, int y, int x)
+char	left(int **map, int *y, int *x)
 {
-	if (y >= Y_SIZE || x >= X_SIZE || y < 0 || x - 1 < 0)
+	if (*y >= Y_SIZE || *x >= X_SIZE || *y < 0 || *x - 1 < 0)
 		return (0);
-	swap(map[y] + x, map[y] + x - 1);
+	swap(map[*y] + *x, map[*y] + *x - 1);
+	(*x)--;
 	return (1);
 }
 
-char	right(int **map, int y, int x)
+char	right(int **map, int *y, int *x)
 {
-	if (y >= Y_SIZE || x + 1 >= X_SIZE || y < 0 || x < 0)
+	if (*y >= Y_SIZE || *x + 1 >= X_SIZE || *y < 0 || *x < 0)
 		return (0);
-	swap(map[y][x], map[y] + x + 1);
+	swap(map[*y] + *x, map[*y] + *x + 1);
+	(*x)++;
 	return (1);
 }
