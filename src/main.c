@@ -6,7 +6,7 @@
 /*   By: kbatz <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 12:55:31 by kbatz             #+#    #+#             */
-/*   Updated: 2019/01/22 21:04:57 by kbatz            ###   ########.fr       */
+/*   Updated: 2019/01/22 21:55:06 by kbatz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ char				(*g_cmds[])(int **, int *, int *) =
 	&up,
 	&down,
 	&left,
-	&right
+	&right,
+	NULL
 };
 
 char	ft_exit(int **a, int *b, int *c)
@@ -60,7 +61,7 @@ void	lst_add(t_list *start, int n)
 	tmp = malloc(sizeof(*tmp));
 	tmp->n = n;
 	lst = start;
-	while (n-- > 0)
+	while (lst->next != start)
 		lst = lst->next;
 	lst->next = tmp;
 	tmp->next = start;
@@ -81,14 +82,9 @@ int		rng_x(int interval)
 		while (i-- > 1)
 			lst_add(nbrs, i);
 	}
-	i = interval;
-	while (i-- > 0)
-	{
-		tmp = lst_get(nbrs, rand() % interval);
-		i = tmp->n;
-		//free(tmp);
-		break ;
-	}
+	tmp = lst_get(nbrs, rand() % interval);
+	i = tmp->n;
+	//free(tmp);
 	return (i);
 }
 
@@ -98,22 +94,15 @@ int		**new_map(int n, int m)
 	int		i;
 	int		j;
 
-	if (!(map = malloc(n * sizeof(*map))))
-		return (NULL);
+	map = malloc(n * sizeof(*map));
 	i = n;
 	while (i-- > 0)
 	{
-		if (!(map[i] = malloc(m * sizeof(**map))))
-		{
-			while (++i < n)
-				free(map[i]);
-			free(map);
-			return (NULL);
-		}
+		map[i] = malloc(m * sizeof(**map));
 		j = m;
 		while (j-- > 0)
-			map[i][j] = ((n * m) - (i * n + j)) % (n * m);
-			//map[i][j] = rng_x(n * m);
+			//map[i][j] = ((n * m) - (i * n + j)) % (n * m);
+			map[i][j] = rng_x(n * m);
 	}
 	return (map);
 }
@@ -151,7 +140,7 @@ void	print_map(int **map, int n, int m)
 			if (map[i][j])
 				printf("|%2d ", map[i][j]);
 			else
-				printf("| * ");
+				printf("|   ");
 		printf("|\n");
 	}
 	j = -1;
@@ -180,15 +169,15 @@ int		main(void)
 	}
 	while (!is_solved(map, Y_SIZE, X_SIZE))
 	{
+		//scanf("%d", &cmd);
 		print_map(map, Y_SIZE, X_SIZE);
 		printf("usage:\n1) UP\n2) DOWN\n3) LEFT\n4) RIGHT\n0) exit\n");
-		scanf("%d", &cmd);
-		while (!(cmd < 4 && g_cmds[cmd](map, &y, &x)))
-		{
+		if (!scanf("%d", &cmd))
+			cmd = 0;
+		if (cmd < 0 || cmd > 4)
 			printf("wrong command\n");
-			printf("usage:\n1) UP\n2) DOWN\n3) LEFT\n4) RIGHT\n");
-			scanf("%d", &cmd);
-		}
+		else if (!(g_cmds[cmd](map, &y, &x)))
+			printf("bad action\n");
 	}
 	print_map(map, Y_SIZE, X_SIZE);
 	printf("Congrats!\n");
