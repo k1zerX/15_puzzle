@@ -6,7 +6,7 @@
 /*   By: kbatz <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 12:55:31 by kbatz             #+#    #+#             */
-/*   Updated: 2019/01/22 21:55:06 by kbatz            ###   ########.fr       */
+/*   Updated: 2019/01/22 22:05:00 by kbatz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@ t_list	*lst_get(t_list *start, int n)
 	int		i;
 
 	tmp = start;
-	i = n;
 	while (i-- > 0)
 	{
 		buf = tmp;
 		tmp = tmp->next;
 	}
 	buf->next = tmp->next;
+	tmp->next = NULL;
 	return (tmp);
 }
 
@@ -60,11 +60,11 @@ void	lst_add(t_list *start, int n)
 
 	tmp = malloc(sizeof(*tmp));
 	tmp->n = n;
+	tmp->next = start;
 	lst = start;
 	while (lst->next != start)
 		lst = lst->next;
 	lst->next = tmp;
-	tmp->next = start;
 }
 
 int		rng_x(int interval)
@@ -101,7 +101,6 @@ int		**new_map(int n, int m)
 		map[i] = malloc(m * sizeof(**map));
 		j = m;
 		while (j-- > 0)
-			//map[i][j] = ((n * m) - (i * n + j)) % (n * m);
 			map[i][j] = rng_x(n * m);
 	}
 	return (map);
